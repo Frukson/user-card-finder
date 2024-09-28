@@ -6,7 +6,7 @@ const StyledWrapper = styled(Box)(
 	({ theme }) => css`
 		min-height: 90px;
 		width: 100%;
-		margin-bottom: 0.2rem;
+		margin-bottom: 3px;
 	`,
 );
 
@@ -20,8 +20,8 @@ const StyledField = styled(TextField)(({ theme }) => ({
 const StyledHelperText = styled(FormHelperText)(
 	({ theme }) => css`
 		color: red;
-		font-size: 1rem;
-		padding-left: 0.5rem;
+		font-size: 16px;
+		padding-left: 8px;
 	`,
 );
 
