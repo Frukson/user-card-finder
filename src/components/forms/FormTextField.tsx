@@ -25,7 +25,7 @@ const StyledHelperText = styled(FormHelperText)(
 	`,
 );
 
-const FromTextField = ({
+const FormTextField = ({
 	type = "text",
 	name,
 	variant = "outlined",
@@ -58,4 +58,4 @@ const FromTextField = ({
 		</StyledWrapper>
 	);
 };
-export default FromTextField;
+export default FormTextField;

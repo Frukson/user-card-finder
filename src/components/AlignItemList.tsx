@@ -6,7 +6,7 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { Box, css, Skeleton, styled } from "@mui/material";
-import { Data } from "../api/users";
+import { UsersData } from "../api/users";
 import { InfiniteData } from "@tanstack/react-query";
 import { useMemo } from "react";
 import useFetchOnInView from "../hooks/useFetchOnInView";
@@ -40,33 +40,29 @@ const StyledListItem = styled(ListItem)(
 	`,
 );
 
-const StyledSkeletonWrapper = styled(Box)(
-	() => css`
-		width: auto;
-		height: 80px;
-		display: flex;
-		justify-items: center;
-		align-items: center;
-		gap: 20px;
-	`,
-);
+const commonWrapperStyles = css`
+	width: auto;
+	height: 80px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+`;
 
-const StyledFetchNextErrorWrapper = styled(Box)(
-	() => css`
-		width: auto;
-		height: 80px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	`,
-);
+const StyledSkeletonWrapper = styled(Box)`
+	${commonWrapperStyles};
+	gap: 20px;
+`;
+
+const StyledFetchNextErrorWrapper = styled(Box)`
+	${commonWrapperStyles};
+`;
 
 export default function AlignItemsList({
 	data,
 	fetchNextPage,
 	isFetchNextPageError,
 }: {
-	data: InfiniteData<Data, unknown> | undefined;
+	data: InfiniteData<UsersData, unknown> | undefined;
 	fetchNextPage: () => void;
 	isFetchNextPageError: boolean;
 }) {
@@ -77,20 +73,48 @@ export default function AlignItemsList({
 		[data],
 	);
 
+	const ListItemComponent = ({
+		item,
+	}: {
+		item: UsersData["items"][number];
+	}) => (
+		<StyledListItem>
+			<ListItemAvatar>
+				<Avatar alt={`avatar-${item.login}`} src={item.avatar_url} />
+			</ListItemAvatar>
+			<Typography component="p" color="text.primary">
+				{item.login}
+			</Typography>
+		</StyledListItem>
+	);
+
+	const SkeletonComponent = () => (
+		<StyledSkeletonWrapper>
+			<StyledListItem>
+				<ListItemAvatar>
+					<Skeleton variant="circular" width={40} height={40} />
+				</ListItemAvatar>
+				<Skeleton variant="rectangular" width={160} height={24} />
+			</StyledListItem>
+			<Divider variant="inset" component="li" />
+		</StyledSkeletonWrapper>
+	);
+
+	const ErrorComponent = () => (
+		<StyledFetchNextErrorWrapper>
+			<Typography fontSize="25px" component="p" color="red">
+				Failed to load users
+			</Typography>
+		</StyledFetchNextErrorWrapper>
+	);
+
 	return (
 		<Wrapper>
 			{filteredData?.map((i) =>
 				i.items.map((i) => {
 					return (
 						<React.Fragment key={i.login}>
-							<StyledListItem>
-								<ListItemAvatar>
-									<Avatar alt={`avatar-${i.login}`} src={i.avatar_url} />
-								</ListItemAvatar>
-								<Typography component="p" color="text.primary">
-									{i.login}
-								</Typography>
-							</StyledListItem>
+							<ListItemComponent item={i} />
 							<Divider variant="inset" component="li" />
 						</React.Fragment>
 					);
@@ -99,26 +123,10 @@ export default function AlignItemsList({
 			{filteredData?.length &&
 				!isFetchNextPageError &&
 				filteredData[filteredData.length - 1].items.length !== 0 && (
-					<StyledSkeletonWrapper>
-						<StyledListItem>
-							<ListItemAvatar>
-								<Skeleton variant="circular" width={40} height={40} />
-							</ListItemAvatar>
-							<Skeleton variant="rectangular" width={160} height={24} />
-						</StyledListItem>
-						<Divider variant="inset" component="li" />
-					</StyledSkeletonWrapper>
+					<SkeletonComponent />
 				)}
 
-			{!isFetchNextPageError ? (
-				<div ref={ref} />
-			) : (
-				<StyledFetchNextErrorWrapper>
-					<Typography fontSize="25px" component="p" color="red">
-						Failed to load users
-					</Typography>
-				</StyledFetchNextErrorWrapper>
-			)}
+			{!isFetchNextPageError ? <div ref={ref} /> : <ErrorComponent />}
 		</Wrapper>
 	);
 }

@@ -11,7 +11,7 @@ import {
 	StyledProgressWrapper,
 	Wrapper,
 } from "./HomePageStyleds";
-import FromTextField from "../../components/forms/FromTextField";
+import FormTextField from "../../components/forms/FormTextField";
 import AlignItemsList from "../../components/AlignItemList";
 import { CircularProgress } from "@mui/material";
 import { searchGithubUsersSchema } from "../../schemas/searchGithubUsersSchema";
@@ -59,7 +59,7 @@ function HomePage() {
 			<StyledHeader>Users github finder</StyledHeader>
 			<FormProvider {...methods}>
 				<StyledForm onChange={debounceSubmit}>
-					<FromTextField
+					<FormTextField
 						name="userName"
 						placeholder={"Type searching user ..."}
 					/>

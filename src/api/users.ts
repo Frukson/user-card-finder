@@ -1,4 +1,4 @@
-export interface Data {
+export interface UsersData {
 	total_count: number;
 	items: {
 		login: string;
@@ -9,7 +9,7 @@ export interface Data {
 export const fetchUsersReq = async (
 	pageParam: number,
 	searchingText: string,
-): Promise<Data> => {
+): Promise<UsersData> => {
 	const res = await fetch(
 		`https://api.github.com/search/users?q=${searchingText}&page=${pageParam}&per_page=12`,
 		{
