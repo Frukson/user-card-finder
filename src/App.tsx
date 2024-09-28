@@ -1,7 +1,8 @@
 import React from "react";
+import HomePage from "./pages/homePage/HomePage";
 
-function App() {
-	return <div className="App">Hello world</div>;
-}
-
+const App = () => {
+	// Place for rooting and global hooks
+	return <HomePage />;
+};
 export default App;
