@@ -78,7 +78,7 @@ export default function AlignItemsList({
 	}: {
 		item: UsersData["items"][number];
 	}) => (
-		<StyledListItem>
+		<StyledListItem data-testid="user-wrapper">
 			<ListItemAvatar>
 				<Avatar alt={`avatar-${item.login}`} src={item.avatar_url} />
 			</ListItemAvatar>
