@@ -40,24 +40,54 @@ const StyledListItem = styled(ListItem)(
 	`,
 );
 
-const commonWrapperStyles = css`
-	width: auto;
-	height: 80px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-`;
+const StyledFetchNextErrorWrapper = styled(Box)(
+	() => css`
+		width: auto;
+		height: 80px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	`,
+);
 
-const StyledSkeletonWrapper = styled(Box)`
-	${commonWrapperStyles};
-	gap: 20px;
-`;
+const StyledSkeletonWrapper = styled(StyledFetchNextErrorWrapper)(
+	({ theme }) => css`
+		gap: ${theme.spacing(2.5)};
+	`,
+);
 
-const StyledFetchNextErrorWrapper = styled(Box)`
-	${commonWrapperStyles};
-`;
+const ListItemComponent = ({ item }: { item: UsersData["items"][number] }) => (
+	<StyledListItem data-testid="user-wrapper">
+		<ListItemAvatar>
+			<Avatar alt={`avatar-${item.login}`} src={item.avatar_url} />
+		</ListItemAvatar>
+		<Typography component="p" color="text.primary">
+			{item.login}
+		</Typography>
+	</StyledListItem>
+);
 
-export default function AlignItemsList({
+const SkeletonComponent = () => (
+	<StyledSkeletonWrapper>
+		<StyledListItem>
+			<ListItemAvatar>
+				<Skeleton variant="circular" width={40} height={40} />
+			</ListItemAvatar>
+			<Skeleton variant="rectangular" width={160} height={24} />
+		</StyledListItem>
+		<Divider variant="inset" component="li" />
+	</StyledSkeletonWrapper>
+);
+
+const ErrorComponent = () => (
+	<StyledFetchNextErrorWrapper>
+		<Typography fontSize="25px" component="p" color="red">
+			Failed to load users
+		</Typography>
+	</StyledFetchNextErrorWrapper>
+);
+
+export default function InfiniteUserList({
 	data,
 	fetchNextPage,
 	isFetchNextPageError,
@@ -73,41 +103,10 @@ export default function AlignItemsList({
 		[data],
 	);
 
-	const ListItemComponent = ({
-		item,
-	}: {
-		item: UsersData["items"][number];
-	}) => (
-		<StyledListItem data-testid="user-wrapper">
-			<ListItemAvatar>
-				<Avatar alt={`avatar-${item.login}`} src={item.avatar_url} />
-			</ListItemAvatar>
-			<Typography component="p" color="text.primary">
-				{item.login}
-			</Typography>
-		</StyledListItem>
-	);
-
-	const SkeletonComponent = () => (
-		<StyledSkeletonWrapper>
-			<StyledListItem>
-				<ListItemAvatar>
-					<Skeleton variant="circular" width={40} height={40} />
-				</ListItemAvatar>
-				<Skeleton variant="rectangular" width={160} height={24} />
-			</StyledListItem>
-			<Divider variant="inset" component="li" />
-		</StyledSkeletonWrapper>
-	);
-
-	const ErrorComponent = () => (
-		<StyledFetchNextErrorWrapper>
-			<Typography fontSize="25px" component="p" color="red">
-				Failed to load users
-			</Typography>
-		</StyledFetchNextErrorWrapper>
-	);
-
+	const showSkeleton =
+		filteredData?.length &&
+		!isFetchNextPageError &&
+		filteredData[filteredData.length - 1].items.length !== 0;
 	return (
 		<Wrapper>
 			{filteredData?.map((i) =>
@@ -120,11 +119,7 @@ export default function AlignItemsList({
 					);
 				}),
 			)}
-			{filteredData?.length &&
-				!isFetchNextPageError &&
-				filteredData[filteredData.length - 1].items.length !== 0 && (
-					<SkeletonComponent />
-				)}
+			{showSkeleton && <SkeletonComponent />}
 
 			{!isFetchNextPageError ? <div ref={ref} /> : <ErrorComponent />}
 		</Wrapper>

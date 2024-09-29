@@ -1,5 +1,4 @@
 import { Box, Container, css, styled } from "@mui/material";
-import Typography from "@mui/material/Typography";
 
 export const Wrapper = styled(Container)(
 	({ theme }) => css`
@@ -39,14 +38,5 @@ export const StyledNotFoundAnyWrapper = styled(Box)(
 		display: flex;
 		height: 100%;
 		align-items: flex-start;
-	`,
-);
-export const StyledHeader = styled(Typography)(
-	({ theme }) => css`
-		margin: 32px 0;
-		font-size: 27px;
-		font-weight: bold;
-		color: black;
-		letter-spacing: 1px;
 	`,
 );

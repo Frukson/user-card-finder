@@ -6,16 +6,15 @@ import { useDebouncedCallback } from "use-debounce";
 import { fetchUsersReq } from "../../api/users";
 import {
 	StyledForm,
-	StyledHeader,
 	StyledNotFoundAnyWrapper,
 	StyledProgressWrapper,
 	Wrapper,
 } from "./HomePageStyleds";
 import FormTextField from "../../components/forms/FormTextField";
-import AlignItemsList from "../../components/AlignItemList";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, useTheme } from "@mui/material";
 import { searchGithubUsersSchema } from "../../schemas/searchGithubUsersSchema";
 import Typography from "@mui/material/Typography";
+import InfiniteUserList from "../../components/InfiniteUserList";
 
 interface FormState {
 	userName: string;
@@ -42,21 +41,23 @@ function HomePage() {
 		setSearchingText(formData.userName);
 	};
 
-	const debouncedFetchNextPage = useDebouncedCallback(() => {
-		if (searchingText.length) {
-			fetchNextPage();
-		}
-	}, 1500);
-
 	const debounceSubmit = useDebouncedCallback(handleSubmit(onSubmit), 1500);
 
 	const notFoundAnyUsers = useMemo(() => {
 		return data?.pages.every((p) => p.total_count === 0);
 	}, [data]);
 
+	const theme = useTheme();
+
 	return (
 		<Wrapper>
-			<StyledHeader>Users github finder</StyledHeader>
+			<Typography
+				fontWeight="bold"
+				fontSize="27px"
+				margin={theme.spacing(4, 0)}
+			>
+				Users github finder
+			</Typography>
 			<FormProvider {...methods}>
 				<StyledForm onChange={debounceSubmit}>
 					<FormTextField
@@ -65,20 +66,26 @@ function HomePage() {
 					/>
 				</StyledForm>
 			</FormProvider>
-			{notFoundAnyUsers ? (
+
+			{notFoundAnyUsers && (
 				<StyledNotFoundAnyWrapper>
 					<Typography fontSize="25px" component="p" color="text.primary">
 						User not found
 					</Typography>
 				</StyledNotFoundAnyWrapper>
-			) : searchingText.length > 0 && isPending ? (
+			)}
+			{!notFoundAnyUsers && searchingText.length > 0 && isPending ? (
 				<StyledProgressWrapper>
 					<CircularProgress />
 				</StyledProgressWrapper>
 			) : (
-				<AlignItemsList
+				<InfiniteUserList
 					data={data}
-					fetchNextPage={debouncedFetchNextPage}
+					fetchNextPage={() => {
+						if (searchingText.length) {
+							fetchNextPage();
+						}
+					}}
 					isFetchNextPageError={isFetchNextPageError}
 				/>
 			)}

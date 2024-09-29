@@ -1,7 +1,7 @@
-# user-card-finder
-
 ## Info from author
 
-Unit of styles could be rem in develop project.
-
 RWD could be more specific.
+
+More tests cases could be added.
+
+This project is too small to show interesting and useful functional technic.
